@@ -1,8 +1,10 @@
 import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-from fetch_data import BootstrapStaticFetcher, ElementSummaryFetcher
+from fetch_data import ElementSummaryFetcher
+from fetch_data.bootstrap_static import fetch_bootstrap_static
 from upload.storage import upload_json_to_gcs
+from upload.bigquery import upload_element_summary_from_gcs_to_bigquery
 
 
 def get_element_summary_for_teams(
@@ -21,8 +23,7 @@ def get_element_summary_for_teams(
         dict: A dictionary containing the element summary data.
     """
     # Step 1: Fetch the latest bootstrap-static data
-    bootstrap_static_fetcher = BootstrapStaticFetcher()
-    raw_data = bootstrap_static_fetcher.fetch()
+    raw_data = fetch_bootstrap_static()
 
     # Step 2: Extract elements data
     elements = raw_data.get("elements", [])
@@ -151,8 +152,50 @@ def fetch_and_upload_multiple_teams(
                 logging.error(f"Team {team_id} generated an exception: {exc}")
 
 
+def fetch_and_upload_element_summary(
+        project_id: str,
+        bucket_name: str,
+        dataset_id: str,
+        destination_folder: str = 'element_summary',
+        team_ids: list = None,
+        element_ids: list = None,
+        max_workers: int = 5
+        ):
+    """
+    Fetch data from the element_summary endpoint and upload if to BigQuery
+    """
+    if not team_ids:
+        bootstrap_static_data = fetch_bootstrap_static()
+        teams = bootstrap_static_data['teams']
+        team_ids = [t['id'] for t in teams]
+
+    fetch_and_upload_multiple_teams(
+        team_ids=team_ids,
+        bucket_name=bucket_name,
+        destination_folder=destination_folder,
+        element_ids=element_ids,
+        max_workers=max_workers
+    )
+
+    tables = [
+        'element_summary_fixtures',
+        'element_summary_history',
+        'element_summary_history_past'
+    ]
+
+    for table_id in tables:
+        upload_element_summary_from_gcs_to_bigquery(
+            project_id=project_id,
+            dataset_id=dataset_id,
+            bucket_name=bucket_name,
+            source_folder=destination_folder,
+            table_id=table_id
+        )
+
+
 if __name__ == "__main__":
     import os
+    import argparse
     from dotenv import load_dotenv
 
     logging.basicConfig(
@@ -160,16 +203,39 @@ if __name__ == "__main__":
         format="%(asctime)s [%(levelname)s] %(message)s",
     )
     load_dotenv()
-    test_team_ids = [1, 2]
-    test_team_id = 1
-    test_element_ids = [1, 2, 28, 29]
+
+    def list_of_ints(arg):
+        return list(map(int, arg.split(',')))
+
+    parser = argparse.ArgumentParser(
+        description="Upload data to BigQuery table.")
+    parser.add_argument(
+        "--team_ids",
+        type=list,
+        default="1,2",
+        help="The ID's of the teams to ingest"
+    )
+    parser.add_argument(
+        "--element_ids",
+        type=list_of_ints,
+        default="1,2,28,29",
+        help="The ID's of the players (elements) from the teams to ingest"
+    )
+    args = parser.parse_args()
+
+    # team_ids = [1, 2]
+    # element_ids = [1, 2, 28, 29]
 
     BUCKET = os.getenv("BUCKET_ID")
+    PROJECT = os.getenv("PROJECT_ID")
+    DATASET = os.getenv("DATASET_ID")
 
-    fetch_and_upload_multiple_teams(
-        team_ids=test_team_ids,
+    fetch_and_upload_element_summary(
+        project_id=PROJECT,
         bucket_name=BUCKET,
+        dataset_id=DATASET,
+        team_ids=args.team_ids,
+        element_ids=args.element_ids,
         destination_folder='element_summary',
-        element_ids=test_element_ids,
         max_workers=5
     )

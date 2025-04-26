@@ -53,7 +53,7 @@ def upload_element_summary_from_gcs_to_bigquery(
     load_job.result()  # Wait for the job to complete
     logging.info(
         f"Loaded {load_job.output_rows} rows into"
-        f"{dataset_id}:{table_id}.")
+        f" {dataset_id}:{table_id}.")
 
 
 if __name__ == "__main__":
