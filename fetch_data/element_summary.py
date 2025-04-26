@@ -22,9 +22,12 @@ class ElementSummaryFetcher:
                     raw_data = await response.json()
 
                     # Inject element key into each subtable record
-                    fixtures = [{'element': player_id, **f} for f in raw_data.get("fixtures", [])]
-                    history = raw_data.get("history", [])
-                    history_past = [{'element': player_id, **hp} for hp in raw_data.get("history_past", [])]
+                    fixtures = [{'element': player_id, 'data': f}
+                                for f in raw_data.get("fixtures", [])]
+                    history = [{'element': player_id, 'data': f}
+                               for f in raw_data.get("history", [])]
+                    history_past = [{'element': player_id, 'data': hp}
+                                    for hp in raw_data.get("history_past", [])]
 
                     return {
                         "player_id": player_id,
@@ -92,8 +95,9 @@ class ElementSummaryFetcher:
         raw_results = asyncio.run(self.fetch_all_players())
         return self.flatten_results(raw_results)
 
+
 # Example usage
 if __name__ == "__main__":
     fetcher = ElementSummaryFetcher(player_ids=[1, 2, 3, 4, 5])
     data = fetcher.run()
-    print(data)
+    print(data['history'][0].keys())
