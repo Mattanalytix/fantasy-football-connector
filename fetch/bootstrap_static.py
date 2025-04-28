@@ -78,5 +78,5 @@ def fetch_bootstrap_static(force_refresh: bool = False):
 
 if __name__ == "__main__":
     fetcher = BootstrapStaticFetcher()
-    data = fetcher.fetch_data()
+    data = fetcher.fetch()
     print(data)  # For testing purposes

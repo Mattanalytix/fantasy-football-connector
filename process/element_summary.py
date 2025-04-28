@@ -1,8 +1,8 @@
 import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-from fetch_data import ElementSummaryFetcher
-from fetch_data.bootstrap_static import fetch_bootstrap_static
+from fetch import ElementSummaryFetcher
+from fetch.bootstrap_static import fetch_bootstrap_static
 from upload.storage import upload_json_to_gcs
 from upload.bigquery import upload_element_summary_from_gcs_to_bigquery
 
