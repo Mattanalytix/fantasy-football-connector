@@ -1,6 +1,6 @@
 import logging
 import requests
-import polars as pl
+# import polars as pl
 from functools import lru_cache
 
 
@@ -34,21 +34,22 @@ class BootstrapStaticFetcher:
         """Extracts specified top-level tables."""
         return {table: data.get(table, []) for table in self.tables_to_extract}
 
-    def convert_table_to_polars(self, table_name, data):
-        """Converts a table (list of dictionaries) to a Polars DataFrame."""
-        if table_name not in self.tables_to_extract:
-            raise ValueError(
-                f"Table '{table_name}' is not in the list of extracted "
-                "tables.")
+    # def convert_table_to_polars(self, table_name, data):
+    #     """Converts a table (list of dictionaries) to a Polars DataFrame."""
+    #     if table_name not in self.tables_to_extract:
+    #         raise ValueError(
+    #             f"Table '{table_name}' is not in the list of extracted "
+    #             "tables.")
 
-        # Convert the table to Polars DataFrame
-        try:
-            return pl.DataFrame(data[table_name])
-        except Exception as e:
-            logging.error(
-                f"Failed to convert table '{table_name}' to Polars DataFrame:"
-                f" {e}")
-            raise
+    #     # Convert the table to Polars DataFrame
+    #     try:
+    #         return pl.DataFrame(data[table_name])
+    #     except Exception as e:
+    #         logging.error(
+    #             f"Failed to convert table '{table_name}' to "
+    #              "Polars DataFrame:"
+    #             f" {e}")
+    #         raise
 
     def run(self):
         """Fetches and extracts the tables."""

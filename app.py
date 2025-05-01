@@ -5,8 +5,17 @@ import os
 import logging
 
 from flask import Flask, render_template, jsonify, request
-from process.element_summary import fetch_and_upload_element_summary
+from process.element_summary import (
+    fetch_and_upload_element_summary
+)
 
+from process.bootstrap_static import get_elements_from_team
+
+
+logging.basicConfig(
+    level=logging.INFO,  # Change to DEBUG for verbose logs
+    format="%(asctime)s [%(levelname)s] %(message)s",
+)
 
 # pylint: disable=C0103
 app = Flask(__name__)
@@ -32,7 +41,7 @@ def fetch_and_upload_element_summary_endpoint():
     try:
         # Get required config from environment variables
         project_id = os.getenv('PROJECT_ID')
-        bucket_name = os.getenv('BUCKET_NAME')
+        bucket_name = os.getenv('BUCKET_ID')
         dataset_id = os.getenv('DATASET_ID')
 
         if not project_id or not bucket_name or not dataset_id:
@@ -62,6 +71,22 @@ def fetch_and_upload_element_summary_endpoint():
     except Exception as e:
         logging.error(
             f"Error in fetch_and_upload_element_summary_endpoint: {e}")
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app.route('/get-elements-from-team', methods=['POST'])
+def get_elements_from_team_endpoint():
+    try:
+        data = request.get_json()
+        team_id = int(data.get('team_id'))
+
+        logging.info(f"Retrieveing elements for team_id: {team_id}")
+        elements = get_elements_from_team(team_id)
+        return jsonify({"elements": elements}), 200
+
+    except Exception as e:
+        logging.error(
+            f"Error in get_elements_from_team_endpoint: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
 
 

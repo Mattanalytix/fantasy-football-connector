@@ -102,6 +102,10 @@ def fetch_and_upload_team_summary(
                 blob_name = f"{destination_folder}/{file_name}"
 
                 # Upload to GCS
+                logging.info(
+                    f"Uploading table {table_name} for "
+                    "team {team_id} to GCS at {blob_name}..."
+                )
                 upload_json_to_gcs(
                     bucket_name=bucket_name,
                     blob_name=blob_name,
@@ -169,6 +173,11 @@ def fetch_and_upload_element_summary(
         teams = bootstrap_static_data['teams']
         team_ids = [t['id'] for t in teams]
 
+    logging.info(
+        f"Fetching element summary data for teams: {team_ids} "
+        "and uploading to GCS bucket: "
+        f"{bucket_name} in folder: {destination_folder}"
+    )
     fetch_and_upload_multiple_teams(
         team_ids=team_ids,
         bucket_name=bucket_name,
@@ -184,6 +193,7 @@ def fetch_and_upload_element_summary(
     ]
 
     for table_id in tables:
+        logging.info(f"Uploading table {table_id} to BigQuery...")
         upload_element_summary_from_gcs_to_bigquery(
             project_id=project_id,
             dataset_id=dataset_id,

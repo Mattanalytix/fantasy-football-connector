@@ -60,3 +60,10 @@ Add variables to a file named `.env`
 ```.env
 BUCKET=YOUR_ETL_BUCKET
 ```
+
+## Debugging the Cloud Run Emulator
+
+```cmd
+minikube -p cloud-run-dev-internal stop
+minikube -p cloud-run-dev-internal start
+```
