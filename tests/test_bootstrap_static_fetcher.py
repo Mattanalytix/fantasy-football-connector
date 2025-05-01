@@ -8,17 +8,6 @@ from fetch.bootstrap_static import (
 )
 
 
-@pytest.fixture
-def sample_bootstrap_data():
-    """Sample data for testing."""
-    return {
-        "elements": [{"id": 1, "name": "test1"}],
-        "teams": [{"id": 2, "name": "test2"}],
-        "events": [{"id": 3, "name": "test3"}],
-        "element_types": [{"id": 4, "name": "test4"}]
-    }
-
-
 @patch("fetch.bootstrap_static.requests.get")
 def test_fetch_success(mock_get, sample_bootstrap_data):
     """Test successful fetch from the API."""
