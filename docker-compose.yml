@@ -1,0 +1,8 @@
+version: '3'
+services:
+  fantasy_football_connector_dev:
+    image: europe-west2-docker.pkg.dev/raw-nonprod-service-k41/fantasy-premier-league/fantasy-football-connector
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+

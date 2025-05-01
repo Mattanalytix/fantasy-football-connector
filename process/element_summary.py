@@ -104,7 +104,7 @@ def fetch_and_upload_team_summary(
                 # Upload to GCS
                 logging.info(
                     f"Uploading table {table_name} for "
-                    "team {team_id} to GCS at {blob_name}..."
+                    f"team {team_id} to GCS at {blob_name}..."
                 )
                 upload_json_to_gcs(
                     bucket_name=bucket_name,

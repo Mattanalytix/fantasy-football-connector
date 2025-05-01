@@ -61,6 +61,15 @@ Add variables to a file named `.env`
 BUCKET=YOUR_ETL_BUCKET
 ```
 
+## Pushing to Artifact Registry
+
+```cmd
+gcloud auth configure-docker
+gcloud auth login
+docker compose build
+docker compose push
+```
+
 ## Debugging the Cloud Run Emulator
 
 ```cmd
