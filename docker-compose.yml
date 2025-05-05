@@ -6,3 +6,8 @@ services:
       context: .
       dockerfile: ./Dockerfile
 
+  fantasy_football_connector_prod:
+    image: europe-west2-docker.pkg.dev/raw-prod-service-k41/fantasy-premier-league/fantasy-football-connector
+    build:
+      context: .
+      dockerfile: ./Dockerfile
