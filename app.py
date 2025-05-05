@@ -6,7 +6,6 @@ from flask import render_template, jsonify, request
 
 from etl.process.bootstrap_static import get_elements_from_team
 from etl.process.element_summary import fetch_and_upload_element_summary
-from etl.utils.string_manipulation import list_of_ints
 from log.logger import setup_logging
 
 
@@ -52,8 +51,8 @@ def fetch_and_upload_element_summary_endpoint():
         data = request.get_json()
 
         destination_folder = data.get('destination_folder', 'element_summary')
-        team_ids = list_of_ints(data.get('team_ids'))  # Optional
-        element_ids = list_of_ints(data.get('element_ids'))  # Optional
+        team_ids = data.get('team_ids')  # Optional
+        element_ids = data.get('element_ids')  # Optional
         max_workers = data.get('max_workers', 5)
 
         fetch_and_upload_element_summary(
