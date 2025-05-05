@@ -10,8 +10,11 @@ COPY requirements.txt .
 # Install any needed packages specified in requirements.txt
 RUN pip install --trusted-host pypi.python.org -r requirements.txt
 
-# Copy the rest of the working directory contents into the container at /app
-COPY . .
+# Copy the application code
+COPY app app/
+COPY etl etl/
+COPY tests tests/
+COPY app.py .
 
 # Run app.py when the container launches
 ENTRYPOINT ["python", "app.py"]
