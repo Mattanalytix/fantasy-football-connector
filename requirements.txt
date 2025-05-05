@@ -8,4 +8,5 @@ google-cloud-bigquery==3.31.0
 google-cloud-logging==3.12.1
 pytest==8.3.5
 python-dotenv==1.1.0
+gunicorn==23.0.0
 debugpy # Required for debugging.
