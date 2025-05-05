@@ -1,45 +1,56 @@
 # Fantasy Football Connector
 
-The fantasy football connector is an ETL application for ingesting data into GCP from the fantasy.premierleague api.
+The fantasy football connector is an ETL application for ingesting data into GCP from the fantasy.premierleague api. 
 
 ## Project Tree
 
-The project is structured as follows:
+The main application code sits in the etl folder and the flask app sits in the app folder. The project is structured as follows:
 
 ```cmd
 fantasy-football-connector/
-│── fetch/                         # Fetchers for API endpoints
+├── app/                           # Flask web application
+│   ├── __init__.py               # Flask app initialization
+│   ├── routes.py                 # Route definitions
+│   ├── static/                   # Static assets (CSS, JS, images)
+│   └── templates/                # HTML templates
+├── etl/                          # ETL modules
+│   ├── fetch/                    # Data fetching modules
+│   │   ├── __init__.py
+│   │   ├── bootstrap_static.py   # Bootstrap static data fetching
+│   │   └── element_summary.py    # Element summary data fetching
+│   ├── process/                  # Data processing modules
+│   │   ├── __init__.py
+│   │   ├── bootstrap_static.py   # Bootstrap static data processing
+│   │   └── element_summary.py    # Element summary data processing
+│   ├── upload/                   # Data upload modules
+│   │   ├── __init__.py
+│   │   ├── storage.py           # Cloud Storage interactions
+│   │   └── bigquery.py          # BigQuery interactions
+│   └── utils/                    # Utility functions
+│       ├── __init__.py
+│       └── string_manipulation.py
+├── log/                          # Logging utilities
 │   ├── __init__.py
-│   ├── fixtures.py                # Handles /fixtures endpoint
-│   ├── element_summary.py         # Handles /element-summary endpoint
-│   ├── bootstrap_static.py        # Handles /bootstrap-static endpoint
-│── process/                       # Processing & transformation logic
+│   └── logger.py                 # General logging setup
+├── tests/                        # Test modules
 │   ├── __init__.py
-│   ├── fixtures.py           # Logic for filtering players based on play history
-│   ├── element_summary.py
-│── upload/                        # Upload data to BigQuery
-│   ├── __init__.py
-│   ├── bigquery_uploader.py       # Handles BQ interactions
-│── log/                           # Logging utilities
-│   ├── __init__.py
-│   ├── slack_logger.py            # Slack logging integration
-│   ├── logger.py                  # General logging setup
-│── config/                        # Configuration management
-│   ├── __init__.py
-│   ├── settings.py                # Environment variables and settings
-│── tests/                         # Unit and integration tests
-│   ├── __init__.py
-│   ├── test_fixtures.py
-│   ├── test_element_summary.py
-│   ├── test_bigquery_uploader.py
-│── utils/                         # Helper methods and utilities
-│   ├── __init__.py
-│   ├── string_manipulation.py
-│── app.py                         # Flask app entry point
-│── requirements.txt                # Dependencies
-│── Dockerfile                      # Docker container setup
-│── cloudbuild.yaml                  # Cloud Build configuration (CI/CD)
-│── README.md                        # Project documentation
+│   ├── test_bootstrap_static.py
+│   └── test_element_summary.py
+├── __init__.py
+├── app.py                        # Application entry point
+├── requirements.txt              # Project dependencies
+├── Dockerfile                    # Docker configuration
+├── docker-compose.yml            # Docker Compose configuration
+├── Procfile                      # Heroku deployment configuration
+├── pytest.ini                    # Pytest configuration
+├── .env                          # Environment variables
+├── .gitignore                    # Git ignore rules
+├── .dockerignore                 # Docker ignore rules
+├── .vscode/                      # VS Code configuration
+├── .idea/                        # PyCharm configuration
+├── .pytest_cache/                # Pytest cache
+├── img/                          # Documentation images
+└── README.md                     # Project documentation
 ```
 
 ## Local Development
