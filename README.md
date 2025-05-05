@@ -4,6 +4,8 @@ The fantasy football connector is an ETL application for ingesting data into GCP
 
 ## Project Tree
 
+The project is structured as follows:
+
 ```cmd
 fantasy-football-connector/
 │── fetch/                         # Fetchers for API endpoints
@@ -67,6 +69,14 @@ DATASET_ID=YOUR_DATASET
 BUCKET_ID=YOUR_BUCKET
 ```
 
+## Running the Web Server
+
+To run the web server locally using vscode make sure you have installed and enabled all of the extensions in the `.vscode/extensions.json` file.
+
+Then to run the app in the Cloud Run Emulator click onto the cloud code extension in the left hand side of vscode and select `Run on Cloud Run Emulator`. This will start the emulator and deploy the app to it.
+
+You can test the app is working by going to `http://localhost:8080/` in your browser. You should see the Hello World index page. You can then test the endpoints using an extension such as Thunder Client or Postman.
+
 ## Pushing to Artifact Registry
 
 ```cmd
@@ -77,6 +87,8 @@ docker compose push
 ```
 
 ## Debugging the Cloud Run Emulator
+
+There is currently a bug in the Cloud Run Emulator that causes the `gcp-auth` addon to not work properly. If you come across this issue you can fix it by running the following commands:
 
 ```cmd
 minikube -p cloud-run-dev-internal stop
