@@ -3,6 +3,11 @@ import logging
 
 from flask import Flask
 from flask import render_template, jsonify, request
+from models import (
+    ElementSummaryRequest,
+    ElementFromTeamRequest
+)
+from config import Config
 
 from etl.process.bootstrap_static import get_elements_from_team
 from etl.process.element_summary import fetch_and_upload_element_summary
@@ -11,6 +16,13 @@ from log.logger import setup_logging
 
 # Initialize logging
 setup_logging()
+
+# Load and validate configuration early
+try:
+    config = Config.from_env()
+except ValueError as e:
+    logging.error(f"Failed to load configuration: {e}")
+    raise
 
 # Create Flask app
 app = Flask(
@@ -38,34 +50,24 @@ def hello():
 @app.route('/fetch-and-upload-element-summary', methods=['POST'])
 def fetch_and_upload_element_summary_endpoint():
     try:
-        # Get required config from environment variables
-        project_id = os.getenv('PROJECT_ID')
-        bucket_name = os.getenv('BUCKET_ID')
-        dataset_id = os.getenv('DATASET_ID')
-
-        if not project_id or not bucket_name or not dataset_id:
-            raise ValueError(
-                "PROJECT_ID, BUCKET_NAME, and DATASET_ID must be"
-                "set in environment variables.")
-
-        data = request.get_json()
-
-        destination_folder = data.get('destination_folder', 'element_summary')
-        team_ids = data.get('team_ids')  # Optional
-        element_ids = data.get('element_ids')  # Optional
-        max_workers = data.get('max_workers', 5)
+        data = ElementSummaryRequest(**request.get_json())
 
         fetch_and_upload_element_summary(
-            project_id=project_id,
-            bucket_name=bucket_name,
-            dataset_id=dataset_id,
-            destination_folder=destination_folder,
-            team_ids=team_ids,
-            element_ids=element_ids,
-            max_workers=max_workers
+            project_id=config.project_id,
+            bucket_name=config.bucket_name,
+            dataset_id=config.dataset_id,
+            destination_folder=data.destination_folder,
+            team_ids=data.team_ids,
+            element_ids=data.element_ids,
+            max_workers=data.max_workers
         )
 
         return jsonify({"status": "success"}), 200
+
+    except ValueError as ve:
+        logging.error(f"Validation error in "
+                      f"fetch_and_upload_element_summary_endpoint: {ve}")
+        return jsonify({"status": "error", "message": str(ve)}), 400
 
     except Exception as e:
         logging.error(
@@ -76,12 +78,17 @@ def fetch_and_upload_element_summary_endpoint():
 @app.route('/get-elements-from-team', methods=['POST'])
 def get_elements_from_team_endpoint():
     try:
-        data = request.get_json()
-        team_id = int(data.get('team_id'))
+        # Validate input using Pydantic model
+        data = ElementFromTeamRequest(**request.get_json())
 
-        logging.info(f"Retrieveing elements for team_id: {team_id}")
-        elements = get_elements_from_team(team_id)
+        logging.info(f"Retrieveing elements for team_id: {data.team_id}")
+        elements = get_elements_from_team(data.team_id)
         return jsonify({"elements": elements}), 200
+
+    except ValueError as ve:
+        logging.error(f"Validation error in get_elements_from_team_endpoint:"
+                      f" {ve}")
+        return jsonify({"status": "error", "message": str(ve)}), 400
 
     except Exception as e:
         logging.error(
