@@ -9,6 +9,8 @@ from process.element_summary import (
     fetch_and_upload_element_summary
 )
 import google.cloud.logging
+
+
 from process.bootstrap_static import get_elements_from_team
 
 
@@ -16,6 +18,7 @@ logging.basicConfig(
     level=logging.INFO,  # Change to DEBUG for verbose logs
     format="%(asctime)s [%(levelname)s] %(message)s",
 )
+
 client = google.cloud.logging.Client()
 client.setup_logging()
 
