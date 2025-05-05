@@ -4,9 +4,11 @@ The fantasy football connector is an ETL application for ingesting data into GCP
 
 ## Project Tree
 
+The project is structured as follows:
+
 ```cmd
 fantasy-football-connector/
-│── fetch_data/                   # Fetchers for API endpoints
+│── fetch/                         # Fetchers for API endpoints
 │   ├── __init__.py
 │   ├── fixtures.py                # Handles /fixtures endpoint
 │   ├── element_summary.py         # Handles /element-summary endpoint
@@ -30,6 +32,9 @@ fantasy-football-connector/
 │   ├── test_fixtures.py
 │   ├── test_element_summary.py
 │   ├── test_bigquery_uploader.py
+│── utils/                         # Helper methods and utilities
+│   ├── __init__.py
+│   ├── string_manipulation.py
 │── app.py                         # Flask app entry point
 │── requirements.txt                # Dependencies
 │── Dockerfile                      # Docker container setup
@@ -58,10 +63,32 @@ gcloud config set project YOUR_PROJECT
 Add variables to a file named `.env`
 
 ```.env
-BUCKET=YOUR_ETL_BUCKET
+LOCAL_ENV=true
+PROJECT_ID=YOUR_PROJECT
+DATASET_ID=YOUR_DATASET
+BUCKET_ID=YOUR_BUCKET
+```
+
+## Running the Web Server
+
+To run the web server locally using vscode make sure you have installed and enabled all of the extensions in the `.vscode/extensions.json` file.
+
+Then to run the app in the Cloud Run Emulator click onto the cloud code extension in the left hand side of vscode and select `Run on Cloud Run Emulator`. This will start the emulator and deploy the app to it.
+
+You can test the app is working by going to `http://localhost:8080/` in your browser. You should see the Hello World index page. You can then test the endpoints using an extension such as Thunder Client or Postman.
+
+## Pushing to Artifact Registry
+
+```cmd
+gcloud auth configure-docker
+gcloud auth login
+docker compose build
+docker compose push
 ```
 
 ## Debugging the Cloud Run Emulator
+
+There is currently a bug in the Cloud Run Emulator that causes the `gcp-auth` addon to not work properly. If you come across this issue you can fix it by running the following commands:
 
 ```cmd
 minikube -p cloud-run-dev-internal stop
