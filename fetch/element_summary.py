@@ -1,20 +1,52 @@
 import logging
 import aiohttp
 import asyncio
+from typing import List, Dict, Any
+from aiohttp import ClientSession
 
 
 class ElementSummaryFetcher:
-    """Fetches data from the Fantasy Premier League element-summary endpoint
-    in parallel."""
+    """
+    Fetches data from the Fantasy Premier League element-summary endpoint in
+    parallel.
+
+    Attributes:
+        BASE_URL (str): The base URL template for element-summary endpoints
+        player_ids (List[int]): List of player IDs to fetch data for
+    """
 
     BASE_URL = "https://fantasy.premierleague.com/api/element-summary/{}/"
 
-    def __init__(self, player_ids):
+    def __init__(self, player_ids: List[int]) -> None:
+        """
+        Initialize the ElementSummaryFetcher.
+
+        Args:
+            player_ids (List[int]): List of player IDs to fetch data for
+        """
         self.player_ids = player_ids
         logging.info(f"Initialized fetcher with {len(player_ids)} player IDs")
 
-    async def fetch_player(self, session, player_id):
-        """Fetches a single player's data asynchronously."""
+    async def fetch_player(self,
+                           session: ClientSession,
+                           player_id: int
+                           ) -> Dict[str, Any]:
+        """
+        Fetches a single player's data asynchronously.
+
+        Args:
+            session (ClientSession): aiohttp client session for making requests
+            player_id (int): ID of the player to fetch data for
+
+        Returns:
+            Dict[str, Any]: Dictionary containing player data including:
+                - player_id: The player's ID
+                - fixtures: List of fixture data with element key injected
+                - history: List of history data with element key injected
+                - history_past: List of past history data with element key
+                    injected
+                - error (optional): Error message if the request failed
+        """
         url = self.BASE_URL.format(player_id)
         try:
             async with session.get(url) as response:
@@ -48,6 +80,7 @@ class ElementSummaryFetcher:
                     }
 
         except Exception as e:
+            logging.error(f"Error fetching player {player_id}: {str(e)}")
             return {
                 "player_id": player_id,
                 "fixtures": [],
@@ -56,8 +89,13 @@ class ElementSummaryFetcher:
                 "error": str(e)
             }
 
-    async def fetch_all_players(self):
-        """Fetches all players in parallel."""
+    async def fetch_all_players(self) -> List[Dict[str, Any]]:
+        """
+        Fetches all players in parallel using asyncio.
+
+        Returns:
+            List[Dict[str, Any]]: List of dictionaries containing player data
+        """
         logging.info("Starting parallel fetch for players")
         async with aiohttp.ClientSession() as session:
             tasks = [self.fetch_player(session, player_id)
@@ -67,8 +105,24 @@ class ElementSummaryFetcher:
         logging.info("Completed all fetches")
         return results
 
-    def flatten_results(self, results):
-        """Flattens the results into a single list."""
+    def flatten_results(
+            self,
+            results: List[Dict[str, Any]]
+            ) -> Dict[str, List[Any]]:
+        """
+        Flattens the results into a single dictionary with separate lists for
+        each data type.
+
+        Args:
+            results (List[Dict[str, Any]]): List of player data dictionaries
+
+        Returns:
+            Dict[str, List[Any]]: Dictionary containing:
+                - fixtures: List of all fixture data
+                - history: List of all history data
+                - history_past: List of all past history data
+                - errors: List of any errors that occurred during fetching
+        """
         all_fixtures = []
         all_history = []
         all_history_past = []
@@ -78,7 +132,7 @@ class ElementSummaryFetcher:
             if 'error' in result:
                 logging.warning(
                     f"Adding error for player {result['player_id']}"
-                    " to errors table due to error: {result['error']}")
+                    f" to errors table due to error: {result['error']}")
                 errors.append({
                     "player_id": result.get("player_id"),
                     "error": result.get("error")
@@ -96,8 +150,13 @@ class ElementSummaryFetcher:
             "errors": errors
         }
 
-    def run(self):
-        """Runs the async fetcher."""
+    def run(self) -> Dict[str, List[Any]]:
+        """
+        Runs the async fetcher and returns flattened results.
+
+        Returns:
+            Dict[str, List[Any]]: Dictionary containing all fetched data
+        """
         raw_results = asyncio.run(self.fetch_all_players())
         return self.flatten_results(raw_results)
 

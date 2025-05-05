@@ -25,6 +25,10 @@
                 "containerPort": 8080,
                 "env": [
                     {
+                        "name": "LOCAL_ENV",
+                        "value": "true"
+                    },
+                    {
                         "name": "PROJECT_ID",
                         "value": "raw-nonprod-service-k41"
                     },

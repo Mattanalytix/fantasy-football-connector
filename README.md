@@ -6,7 +6,7 @@ The fantasy football connector is an ETL application for ingesting data into GCP
 
 ```cmd
 fantasy-football-connector/
-│── fetch_data/                   # Fetchers for API endpoints
+│── fetch/                         # Fetchers for API endpoints
 │   ├── __init__.py
 │   ├── fixtures.py                # Handles /fixtures endpoint
 │   ├── element_summary.py         # Handles /element-summary endpoint
@@ -30,6 +30,9 @@ fantasy-football-connector/
 │   ├── test_fixtures.py
 │   ├── test_element_summary.py
 │   ├── test_bigquery_uploader.py
+│── utils/                         # Helper methods and utilities
+│   ├── __init__.py
+│   ├── string_manipulation.py
 │── app.py                         # Flask app entry point
 │── requirements.txt                # Dependencies
 │── Dockerfile                      # Docker container setup
@@ -58,7 +61,10 @@ gcloud config set project YOUR_PROJECT
 Add variables to a file named `.env`
 
 ```.env
-BUCKET=YOUR_ETL_BUCKET
+LOCAL_ENV=true
+PROJECT_ID=YOUR_PROJECT
+DATASET_ID=YOUR_DATASET
+BUCKET_ID=YOUR_BUCKET
 ```
 
 ## Pushing to Artifact Registry

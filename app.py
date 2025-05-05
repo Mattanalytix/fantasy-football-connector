@@ -5,25 +5,22 @@ import os
 import logging
 
 from flask import Flask, render_template, jsonify, request
+
+from log.logger import setup_logging
+from process.bootstrap_static import get_elements_from_team
 from process.element_summary import (
     fetch_and_upload_element_summary
 )
-import google.cloud.logging
+from utils.string_manipulation import list_of_ints
 
-
-from process.bootstrap_static import get_elements_from_team
-
-
-logging.basicConfig(
-    level=logging.INFO,  # Change to DEBUG for verbose logs
-    format="%(asctime)s [%(levelname)s] %(message)s",
-)
-
-client = google.cloud.logging.Client()
-client.setup_logging()
 
 # pylint: disable=C0103
 app = Flask(__name__)
+
+
+@app.before_request
+def init_logging():
+    setup_logging()
 
 
 @app.route('/')
@@ -57,8 +54,8 @@ def fetch_and_upload_element_summary_endpoint():
         data = request.get_json()
 
         destination_folder = data.get('destination_folder', 'element_summary')
-        team_ids = data.get('team_ids')  # Optional
-        element_ids = data.get('element_ids')  # Optional
+        team_ids = list_of_ints(data.get('team_ids'))  # Optional
+        element_ids = list_of_ints(data.get('element_ids'))  # Optional
         max_workers = data.get('max_workers', 5)
 
         fetch_and_upload_element_summary(
