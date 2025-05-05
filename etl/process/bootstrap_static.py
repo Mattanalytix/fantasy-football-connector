@@ -1,5 +1,5 @@
 from typing import Dict, List
-from fetch.bootstrap_static import fetch_bootstrap_static
+from etl.fetch.bootstrap_static import fetch_bootstrap_static
 
 
 def get_elements_from_team(team_id: int) -> List[int]:

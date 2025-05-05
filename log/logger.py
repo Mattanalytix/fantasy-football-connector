@@ -27,7 +27,7 @@ def setup_logging() -> None:
     load_dotenv()
 
     # Choose logging mode
-    if os.getenv("LOCAL_ENV") == "true":
+    if os.getenv("LOCAL_ENV", "false") == "true":
         logging.basicConfig(
             level=logging.DEBUG,
             format="%(asctime)s [%(levelname)s] %(message)s",

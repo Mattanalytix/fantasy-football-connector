@@ -1,26 +1,23 @@
-"""
-A sample Hello World server.
-"""
 import os
 import logging
 
-from flask import Flask, render_template, jsonify, request
+from flask import Flask
+from flask import render_template, jsonify, request
 
+from etl.process.bootstrap_static import get_elements_from_team
+from etl.process.element_summary import fetch_and_upload_element_summary
 from log.logger import setup_logging
-from process.bootstrap_static import get_elements_from_team
-from process.element_summary import (
-    fetch_and_upload_element_summary
+
+
+# Initialize logging
+setup_logging()
+
+# Create Flask app
+app = Flask(
+    __name__,
+    template_folder='ui/templates',
+    static_folder='ui/static'
 )
-from utils.string_manipulation import list_of_ints
-
-
-# pylint: disable=C0103
-app = Flask(__name__)
-
-
-@app.before_request
-def init_logging():
-    setup_logging()
 
 
 @app.route('/')
@@ -54,8 +51,8 @@ def fetch_and_upload_element_summary_endpoint():
         data = request.get_json()
 
         destination_folder = data.get('destination_folder', 'element_summary')
-        team_ids = list_of_ints(data.get('team_ids'))  # Optional
-        element_ids = list_of_ints(data.get('element_ids'))  # Optional
+        team_ids = data.get('team_ids')  # Optional
+        element_ids = data.get('element_ids')  # Optional
         max_workers = data.get('max_workers', 5)
 
         fetch_and_upload_element_summary(
@@ -94,4 +91,4 @@ def get_elements_from_team_endpoint():
 
 if __name__ == '__main__':
     server_port = os.environ.get('PORT', '8080')
-    app.run(debug=False, port=server_port, host='0.0.0.0')
+    app.run(debug=True, port=server_port, host='0.0.0.0')

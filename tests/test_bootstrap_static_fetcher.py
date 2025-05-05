@@ -2,7 +2,7 @@ import requests
 from unittest.mock import patch, MagicMock
 import pytest
 
-from fetch.bootstrap_static import (
+from etl.fetch.bootstrap_static import (
     BootstrapStaticFetcher,
     fetch_bootstrap_static
 )

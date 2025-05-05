@@ -10,8 +10,8 @@ COPY requirements.txt .
 # Install any needed packages specified in requirements.txt
 RUN pip install --trusted-host pypi.python.org -r requirements.txt
 
-# Copy the rest of the working directory contents into the container at /app
+# Copy the application code
 COPY . .
 
 # Run app.py when the container launches
-ENTRYPOINT ["python", "app.py"]
+ENTRYPOINT ["gunicorn", "-b", "0.0.0.0:8080", "app:app"]

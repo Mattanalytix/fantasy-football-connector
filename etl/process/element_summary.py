@@ -2,10 +2,10 @@ import logging
 from typing import Dict, List, Optional, Any
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-from fetch import ElementSummaryFetcher
-from fetch.bootstrap_static import fetch_bootstrap_static
-from upload.storage import upload_json_to_gcs
-from upload.bigquery import upload_element_summary_from_gcs_to_bigquery
+from etl.fetch import ElementSummaryFetcher
+from etl.fetch.bootstrap_static import fetch_bootstrap_static
+from etl.upload.storage import upload_json_to_gcs
+from etl.upload.bigquery import upload_element_summary_from_gcs_to_bigquery
 
 
 def get_element_summary_for_teams(
@@ -221,7 +221,7 @@ if __name__ == "__main__":
     import os
     import argparse
     from dotenv import load_dotenv
-    from utils.string_manipulation import list_of_ints
+    from etl.utils.string_manipulation import list_of_ints
 
     logging.basicConfig(
         level=logging.INFO,  # Change to DEBUG for verbose logs
