@@ -16,3 +16,8 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     id: 'Push Docker image to Artifact Registry'
     args: ['push', '$_IMAGE']
+  
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+timeout: 1800s
