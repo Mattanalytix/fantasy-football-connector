@@ -1,0 +1,18 @@
+steps:
+  - name: 'alpine'
+    id: 'image name'
+    entrypoint: 'sh'  
+    args: 
+    - '-c'
+    - | 
+        echo "***********************"
+        echo "$_IMAGE"
+        echo "***********************"
+
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'Build Docker image'
+    args: ['build', '-t', '$_IMAGE', '-t', 'latest', '.']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'Push Docker image to Artifact Registry'
+    args: ['push', '$_IMAGE']
