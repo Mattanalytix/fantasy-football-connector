@@ -1,3 +1,7 @@
+substitutions:
+  _LATEST_TAG: ${_IMAGE}:latest
+  _COMMIT_TAG: ${_IMAGE}:${COMMIT_SHA}
+
 steps:
   - name: 'alpine'
     id: 'image name'
@@ -11,11 +15,11 @@ steps:
 
   - name: 'gcr.io/cloud-builders/docker'
     id: 'Build Docker image'
-    args: ['build', '-t', '$_IMAGE', '-t', 'latest', '.']
+    args: ['build', '-t', '${_LATEST_TAG}', '-t', '${_COMMIT_TAG}', '.']
 
   - name: 'gcr.io/cloud-builders/docker'
     id: 'Push Docker image to Artifact Registry'
-    args: ['push', '$_IMAGE']
+    args: ['push', '${_IMAGE}']
   
 options:
   logging: CLOUD_LOGGING_ONLY
