@@ -7,7 +7,7 @@ def list_of_ints(arg: str) -> List[int]:
 
     Args:
         arg (str): A string containing comma-separated integers.
-    
+
     Returns:
         List[int]: A list of integers parsed from the input string.
 

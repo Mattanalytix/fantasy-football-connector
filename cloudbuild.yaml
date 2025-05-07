@@ -1,18 +1,63 @@
+substitutions:
+  _LATEST_TAG: ${_IMAGE}:latest
+  _COMMIT_TAG: ${_IMAGE}:${COMMIT_SHA}
+  _CD_TRIGGER_NAME: ${_TRIGGER_NAME}
+  _CD_TRIGGER_REGION: ${_TRIGGER_REGION}
+
 steps:
   - name: 'alpine'
-    id: 'image name'
+    id: 'print vars'
     entrypoint: 'sh'  
     args: 
     - '-c'
     - | 
         echo "***********************"
-        echo "$_IMAGE"
+        echo "PROJECT_ID: $PROJECT_ID"
+        echo "BRANCH_NAME: $BRANCH_NAME"
+        echo "LATEST_TAG: $_LATEST_TAG"
+        echo "COMMIT_TAG: $_COMMIT_TAG"
         echo "***********************"
 
   - name: 'gcr.io/cloud-builders/docker'
     id: 'Build Docker image'
-    args: ['build', '-t', '$_IMAGE', '-t', 'latest', '.']
+    args: ['build', '-t', '${_LATEST_TAG}', '-t', '${_COMMIT_TAG}', '.']
 
   - name: 'gcr.io/cloud-builders/docker'
-    id: 'Push Docker image to Artifact Registry'
-    args: ['push', '$_IMAGE']
+    id: 'Push Image to Artifact Registry with commit SHA tag'
+    args: ['push', '${_COMMIT_TAG}']
+  
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'Push Docker image to Artifact Registry with latest tag'
+    args: ['push', '${_LATEST_TAG}']
+
+  - name: '${_COMMIT_TAG}'
+    id: 'Lint Code'
+    entrypoint: 'flake8'
+    args: ['.']
+
+  - name: '${_COMMIT_TAG}'
+    id: 'Run Unit Tests'
+    entrypoint: 'pytest'
+    args: ['tests/']
+
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'Trigger CD pipeline'
+    entrypoint: 'bash'
+    args:
+    - '-c'
+    - |
+        if [[ "$BRANCH_NAME" == "prod" || "$BRANCH_NAME" == "dev" ]]; then
+          echo "Triggering CD pipeline for branch: $BRANCH_NAME"
+          gcloud builds triggers run $_CD_TRIGGER_NAME \
+            --branch="$BRANCH_NAME" \
+            --region="$_CD_TRIGGER_REGION" \
+            --substitutions=_FPL_IMAGE_TAG="$COMMIT_SHA" \
+            --project="$PROJECT_ID"
+        else
+          echo "Skipping CD trigger for branch: $BRANCH_NAME"
+        fi
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+timeout: 1800s
