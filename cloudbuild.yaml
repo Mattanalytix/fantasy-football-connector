@@ -13,7 +13,7 @@ steps:
     - | 
         echo "***********************"
         echo "BRANCH_NAME: $BRANCH_NAME"
-        echo "LATEST_TAG: $LATEST_TAG"
+        echo "LATEST_TAG: $_LATEST_TAG"
         echo "COMMIT_TAG:$_COMMIT_TAG"
         echo "***********************"
 
