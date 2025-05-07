@@ -30,6 +30,16 @@ steps:
     id: 'Push Docker image to Artifact Registry with latest tag'
     args: ['push', '${_LATEST_TAG}']
 
+  - name: '${_COMMIT_TAG}'
+    id: 'Lint Code'
+    entrypoint: 'flake8'
+    args: ['.']
+
+  - name: '${_COMMIT_TAG}'
+    id: 'Run Unit Tests'
+    entrypoint: 'pytest'
+    args: ['tests/']
+
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'Trigger CD pipeline'
     entrypoint: 'bash'
@@ -44,7 +54,7 @@ steps:
             --substitutions=_FPL_IMAGE_TAG="$COMMIT_SHA" \
             --project="$PROJECT_ID"
         else
-          echo "Skipping trigger for branch: $BRANCH_NAME"
+          echo "Skipping CD trigger for branch: $BRANCH_NAME"
         fi
 
 options:
