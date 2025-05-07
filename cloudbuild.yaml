@@ -36,7 +36,7 @@ steps:
           gcloud builds triggers run $_CD_TRIGGER_NAME \
             --branch="$BRANCH_NAME" \
             --region="$_CD_TRIGGER_REGION" \
-            --substitutions=_IMAGE_TAG="$COMMIT_SHA" \
+            --substitutions=_FPL_IMAGE_TAG="$COMMIT_SHA" \
             --project="$PROJECT_ID"
         else
           echo "Skipping trigger for branch: $BRANCH_NAME"
