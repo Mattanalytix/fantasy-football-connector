@@ -12,6 +12,7 @@ steps:
     - '-c'
     - | 
         echo "***********************"
+        echo "PROJECT_ID: $PROJECT_ID"
         echo "BRANCH_NAME: $BRANCH_NAME"
         echo "LATEST_TAG: $_LATEST_TAG"
         echo "COMMIT_TAG: $_COMMIT_TAG"
