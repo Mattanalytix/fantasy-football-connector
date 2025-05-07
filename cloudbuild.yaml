@@ -27,11 +27,11 @@ steps:
   
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'Trigger CD pipeline'
-    entrypoint: 'sh'
+    entrypoint: 'bash'
     args:
     - '-c'
     - |
-        if [ "$BRANCH_NAME" = "prod" || "$BRANCH_NAME" = "dev" ]; then
+        if [[ "$BRANCH_NAME" == "prod" || "$BRANCH_NAME" == "dev" ]]; then
           echo "Triggering CD pipeline for branch: $BRANCH_NAME"
           gcloud builds triggers run $_CD_TRIGGER_NAME \
             --branch="$BRANCH_NAME" \
