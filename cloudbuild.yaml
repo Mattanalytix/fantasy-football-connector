@@ -6,14 +6,15 @@ substitutions:
 
 steps:
   - name: 'alpine'
-    id: 'print tags'
+    id: 'print vars'
     entrypoint: 'sh'  
     args: 
     - '-c'
     - | 
         echo "***********************"
-        echo "$_LATEST_TAG"
-        echo "$_COMMIT_TAG"
+        echo "BRANCH_NAME: $BRANCH_NAME"
+        echo "LATEST_TAG: $LATEST_TAG"
+        echo "COMMIT_TAG:$_COMMIT_TAG"
         echo "***********************"
 
   # - name: 'gcr.io/cloud-builders/docker'
