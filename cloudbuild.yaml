@@ -17,13 +17,13 @@ steps:
         echo "COMMIT_TAG:$_COMMIT_TAG"
         echo "***********************"
 
-  # - name: 'gcr.io/cloud-builders/docker'
-  #   id: 'Build Docker image'
-  #   args: ['build', '-t', '${_LATEST_TAG}', '-t', '${_COMMIT_TAG}', '.']
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'Build Docker image'
+    args: ['build', '-t', '${_LATEST_TAG}', '-t', '${_COMMIT_TAG}', '.']
 
-  # - name: 'gcr.io/cloud-builders/docker'
-  #   id: 'Push Docker image to Artifact Registry'
-  #   args: ['push', '${_IMAGE}']
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'Push Docker image to Artifact Registry'
+    args: ['push', '${_IMAGE}']
   
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'Trigger CD pipeline'
@@ -41,13 +41,6 @@ steps:
         else
           echo "Skipping trigger for branch: $BRANCH_NAME"
         fi
-    # args: [
-    #   'builds',
-    #   'triggers',
-    #   'run',
-    #   'dbt-cd-trigger-test',
-    #   '--branch', 'feature/terraform-module',
-    #   '--region', 'europe-west2' ]
 
 options:
   logging: CLOUD_LOGGING_ONLY
