@@ -10,4 +10,5 @@ pytest==8.3.5
 python-dotenv==1.1.0
 gunicorn==23.0.0
 pydantic==2.11.4
+flake8==7.2.0
 debugpy # Required for debugging.

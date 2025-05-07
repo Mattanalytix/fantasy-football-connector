@@ -8,7 +8,7 @@ from etl.fetch.bootstrap_static import (
 )
 
 
-@patch("fetch.bootstrap_static.requests.get")
+@patch("etl.fetch.bootstrap_static.requests.get")
 def test_fetch_success(mock_get, sample_bootstrap_data):
     """Test successful fetch from the API."""
     mock_response = MagicMock()
@@ -28,7 +28,7 @@ def test_fetch_success(mock_get, sample_bootstrap_data):
     assert "element_types" in data
 
 
-@patch("fetch.bootstrap_static.requests.get")
+@patch("etl.fetch.bootstrap_static.requests.get")
 def test_fetch_503_error(mock_get):
     mock_response = MagicMock()
     mock_response.status_code = 503
@@ -42,7 +42,7 @@ def test_fetch_503_error(mock_get):
         fetcher.run()
 
 
-@patch("fetch.bootstrap_static.requests.get")
+@patch("etl.fetch.bootstrap_static.requests.get")
 def test_fetch_503_error_logs_message(mock_get, caplog):
     # Mock the 503 response
     mock_response = MagicMock()
@@ -62,7 +62,7 @@ def test_fetch_503_error_logs_message(mock_get, caplog):
         in caplog.text
 
 
-@patch("fetch.bootstrap_static.__fetch_bootstrap_static_internal")
+@patch("etl.fetch.bootstrap_static.__fetch_bootstrap_static_internal")
 def test_fetch_bootstrap_static(mock_internal_fetch):
     mock_internal_fetch.return_value = {"dummy": "data"}
 
