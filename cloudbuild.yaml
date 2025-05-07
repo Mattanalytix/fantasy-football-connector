@@ -30,12 +30,12 @@ steps:
     args:
     - '-c'
     - |
-        if [ "$BRANCH_NAME" = "prod" ] || [ "$BRANCH_NAME" = "dev" ]; then
-          gcloud builds triggers run ${_TRIGGER_NAME} \
-            --branch=${BRANCH_NAME} \
-            --region=${_TRIGGER_REGION} \
-            --substitutions=_IMAGE=${_LATEST_TAG},_COMMIT_SHA=${COMMIT_SHA} \
-            --project=${PROJECT_ID}
+        if [[ "$BRANCH_NAME" == "prod" || "$BRANCH_NAME" == "dev" ]]; then
+          gcloud builds triggers run $_CD_TRIGGER_NAME \
+            --branch=$BRANCH_NAME \
+            --region=$_CD_TRIGGER_REGION \
+            --substitutions=_IMAGE=$_IMAGE \
+            --project=$PROJECT_ID
         else
           echo "Skipping trigger for branch: $BRANCH_NAME"
         fi
