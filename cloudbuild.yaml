@@ -23,9 +23,13 @@ steps:
     args: ['build', '-t', '${_LATEST_TAG}', '-t', '${_COMMIT_TAG}', '.']
 
   - name: 'gcr.io/cloud-builders/docker'
-    id: 'Push Docker image to Artifact Registry'
-    args: ['push', '${_IMAGE}']
+    id: 'Push Image to Artifact Registry with commit SHA tag'
+    args: ['push', '${_COMMIT_TAG}']
   
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'Push Docker image to Artifact Registry with latest tag'
+    args: ['push', '${_LATEST_TAG}']
+
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'Trigger CD pipeline'
     entrypoint: 'bash'
