@@ -14,7 +14,7 @@ steps:
         echo "***********************"
         echo "BRANCH_NAME: $BRANCH_NAME"
         echo "LATEST_TAG: $_LATEST_TAG"
-        echo "COMMIT_TAG:$_COMMIT_TAG"
+        echo "COMMIT_TAG: $_COMMIT_TAG"
         echo "***********************"
 
   - name: 'gcr.io/cloud-builders/docker'
