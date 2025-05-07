@@ -30,12 +30,12 @@ steps:
     id: 'Push Docker image to Artifact Registry with latest tag'
     args: ['push', '${_LATEST_TAG}']
 
-  - name: 'gcr.io/${_COMMIT_TAG}'
+  - name: '${_COMMIT_TAG}'
     id: 'Lint Code'
     entrypoint: 'flake8'
     args: ['.']
 
-  - name: 'gcr.io/${_COMMIT_TAG}'
+  - name: '${_COMMIT_TAG}'
     id: 'Run Unit Tests'
     entrypoint: 'pytest'
     args: ['tests/']
