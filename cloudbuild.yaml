@@ -30,7 +30,7 @@ steps:
     args:
     - '-c'
     - |
-        if [[ "$BRANCH_NAME" == "prod" || "$BRANCH_NAME" == "dev" ]]; then
+        if [ "$BRANCH_NAME" = "prod" ] || [ "$BRANCH_NAME" = "dev" ]; then
           gcloud builds triggers run ${_TRIGGER_NAME} \
             --branch=${BRANCH_NAME} \
             --region=${_TRIGGER_REGION} \
