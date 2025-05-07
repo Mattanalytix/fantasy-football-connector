@@ -1,8 +1,8 @@
 substitutions:
   _LATEST_TAG: ${_IMAGE}:latest
   _COMMIT_TAG: ${_IMAGE}:${COMMIT_SHA}
-  _TRIGGER_NAME: ${_TRIGGER_NAME}
-  _TRIGGER_REGION: ${_TRIGGER_REGION}
+  _CD_TRIGGER_NAME: ${_TRIGGER_NAME}
+  _CD_TRIGGER_REGION: ${_TRIGGER_REGION}
 
 steps:
   - name: 'alpine'
